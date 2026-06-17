@@ -13,25 +13,16 @@ $stats['active_subscriptions'] = (int)$pdo->query("SELECT COUNT(*) FROM subscrip
 $stats['enrollments'] = (int)$pdo->query("SELECT COUNT(*) FROM enrollments")->fetchColumn();
 
 // ----- Student data -----
-$my_courses = [];
-$student_progress = [];
-$student_stats = null;
-if (isStudent()) {
-    $stmt = $pdo->prepare("
-        SELECT c.*, e.enrolled_at,
-               (SELECT COUNT(*) FROM course_modules cm WHERE cm.course_id = c.id) AS total_modules,
-               (SELECT COUNT(*) FROM module_completions mc INNER JOIN course_modules cm2 ON cm2.id = mc.module_id WHERE cm2.course_id = c.id AND mc.user_id = ?) AS done_modules
-        FROM courses c
-        INNER JOIN enrollments e ON c.id = e.course_id
-        WHERE e.user_id = ? AND c.is_active = 1
-        ORDER BY e.enrolled_at DESC
-        LIMIT 6
-    ");
-    $stmt->execute([$userId, $userId]);
-    $my_courses = $stmt->fetchAll();
-
-    $student_stats = getUserStats($userId);
-}
+$stmt = $pdo->prepare("
+    SELECT c.*, e.enrolled_at,
+           (SELECT COUNT(*) FROM course_modules cm WHERE cm.course_id = c.id) AS total_modules,
+           (SELECT COUNT(*) FROM module_completions mc INNER JOIN course_modules cm2 ON cm2.id = mc.module_id WHERE cm2.course_id = c.id AND mc.user_id = ?) AS done_modules
+    FROM courses c
+    INNER JOIN enrollments e ON c.id = e.course_id
+    WHERE e.user_id = ? AND c.is_active = 1
+    ORDER BY e.enrolled_at DESC
+    LIMIT 6
+");
 
 // ----- Teacher data -----
 $teacher_stats = [];
