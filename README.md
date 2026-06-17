@@ -97,24 +97,25 @@ define('DB_USER', 'root');
 define('DB_PASS', '');
 ```
 
-### Stap 3: Database aanmaken
+### Stap 3: Database installeren (één bestand)
 
-Maak een nieuwe MySQL database aan met de naam `leerplatform` (of gebruik de naam die je hebt ingesteld in stap 2).
+Alle tabellen staan in **één** SQL-bestand: `database.sql`. Kies één van deze methodes:
 
-### Stap 4: Database schema importeren
+**Optie A — Automatisch (aanbevolen voor XAMPP):**
+1. Start Apache en MySQL in het XAMPP Control Panel
+2. Open `http://localhost/[jouw-project-map]/setup_database.php`
+3. Log daarna in via `login.php`
 
-Importeer het SQL-bestand `database.sql` in je database:
+**Optie B — Via phpMyAdmin:**
+1. Open [phpMyAdmin](http://localhost/phpmyadmin)
+2. Maak database `leerplatform` aan (of kies Importeren)
+3. Importeer `database.sql`
+4. Klik op "Uitvoeren"
 
-**Via phpMyAdmin:**
-1. Open phpMyAdmin
-2. Selecteer de database `leerplatform`
-3. Ga naar het tabblad "Importeren"
-4. Kies het bestand `database.sql`
-5. Klik op "Uitvoeren"
-
-**Via command line:**
+**Optie C — Via command line (XAMPP):**
 ```bash
-mysql -u root -p leerplatform < database.sql
+C:\xampp\mysql\bin\mysql.exe -u root -e "CREATE DATABASE IF NOT EXISTS leerplatform CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci"
+C:\xampp\mysql\bin\mysql.exe -u root leerplatform < database.sql
 ```
 
 ### Stap 5: Toegang tot de applicatie
@@ -126,12 +127,20 @@ http://localhost/[jouw-project-map]/
 
 ## Database Setup
 
-Het database schema bevat de volgende tabellen:
+De hele database draait op **één MySQL-database** (`leerplatform`) via XAMPP. Importeer alleen `database.sql` — geen aparte update-scripts meer nodig.
 
-- **users**: Gebruikersgegevens (admin en studenten)
-- **courses**: Cursusinformatie
-- **subscriptions**: Abonnementen van gebruikers
-- **enrollments**: Inschrijvingen van gebruikers voor cursussen
+| Tabel | Doel |
+|-------|------|
+| **users** | Gebruikers (admin, docent, student) |
+| **courses** | Cursusinformatie |
+| **subscriptions** | Abonnementen |
+| **enrollments** | Inschrijvingen |
+| **user_stats** | XP en login-streaks |
+| **badges** / **user_badges** | Gamification |
+| **course_modules** / **module_completions** | Cursusmodules |
+| **course_ratings** | Beoordelingen |
+| **notifications** | Meldingen |
+| **activity_feed** | Activiteitenlog |
 
 ### Standaard accounts
 
@@ -220,7 +229,8 @@ De applicatie implementeert de volgende beveiligingsmaatregelen:
 ├── enrollment_delete.php   # Inschrijving verwijderen
 ├── enroll_student.php      # Student zelf inschrijven
 ├── my_courses.php          # Mijn cursussen (Student)
-├── database.sql            # Database schema en seed data
+├── database.sql            # Volledige database (alle 12 tabellen + demo-data)
+├── setup_database.php      # Eén-klik installatie voor XAMPP MySQL
 └── README.md               # Deze documentatie
 ```
 
@@ -267,4 +277,3 @@ plagiaat wordt niet toegestaan.
 ## Contact
 
 Voor vragen of problemen, neem contact op met de ontwikkelaar.
-
